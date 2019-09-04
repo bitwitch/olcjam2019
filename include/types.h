@@ -13,7 +13,8 @@ typedef double f64;
 struct input {
     bool left;
     bool right;
-    bool space;
+    bool spaceHeld;
+    bool spaceReleased;
 };
 
 
