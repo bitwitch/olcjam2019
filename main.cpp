@@ -16,14 +16,19 @@ public:
 
     bool OnUserCreate() override 
     {
-        Input = { };
-        Player = { 
-            .position = { 100, 100 },
-            .width = 9,
-            .height = 25,
-            .speedHoriz = 250.0f,
-            .pge = this 
-        };
+        Input = {};
+
+        Player = {}; 
+        Player.position = { 100, 100 };
+        Player.width = 9;
+        Player.height = 25;
+        Player.speedHoriz = 250.0f;
+        Player.jumpSpeed = 6000.0f;
+        Player.canJump = false;
+        Player.grounded = false;
+        Player.gravity = 200.0f;
+        Player.pge = this;
+
         return true;    
     }
 
@@ -32,7 +37,7 @@ public:
         Clear(olc::BLACK);
         Input.left = GetKey(olc::Key::LEFT).bHeld;
         Input.right = GetKey(olc::Key::RIGHT).bHeld;
-        Input.space = GetKey(olc::Key::RIGHT).bHeld;
+        Input.space = GetKey(olc::Key::SPACE).bPressed;
 
         Player.Update(Input, fElapsedTime);
         return true;    

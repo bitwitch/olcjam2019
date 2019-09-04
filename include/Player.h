@@ -16,7 +16,6 @@ struct player {
     bool right;
     bool jump;
     f32 speedHoriz;
-    f32 speedVert;
     f32 jumpSpeed;
     bool grounded;
     f32 gravity;

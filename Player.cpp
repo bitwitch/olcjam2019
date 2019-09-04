@@ -6,11 +6,17 @@ void player::Update (input Input, f32 dt) {
     right = Input.right;
     jump = Input.space;
 
-
 // check collisions
     // if collide left, left = false
     // if collide right, right = false
     // if collide bottom, grounded = true, canJump = true
+
+    if (position.y > 500) {
+        grounded = true;
+        canJump = true;
+    }
+
+
 
 // move player
     if (left && !right) {
@@ -22,7 +28,7 @@ void player::Update (input Input, f32 dt) {
     if (canJump && jump) {
         canJump = false;
         grounded = false;
-        position.y -= speedVert * dt;
+        position.y -= jumpSpeed * dt;
     }
 
     if (!grounded) {
