@@ -1,26 +1,5 @@
 #include "Player.h"
 
-v2 getPenetrationVector(v2 *md) {
-    f32 minDist = ABS(0.0f - md[0].x); 
-    v2 boundsPoint = V2(md[0].x, 0.0f);
-
-    if (ABS(md[1].x) < minDist) {
-        minDist = ABS(md[1].x);
-        boundsPoint = V2(md[1].x, 0.0f);
-    }
-    if (ABS(md[1].y) < minDist) {
-        minDist = ABS(md[1].y);
-        boundsPoint = V2(0.0f, md[1].y);
-    }
-    if (ABS(md[0].y) < minDist) {
-        minDist = ABS(md[0].y);
-        boundsPoint = V2(0.0f, md[0].y);
-    }
-
-    return boundsPoint;
-}
-
-
 void player::Update (input Input, f32 dt) {
     
 // get players intention
@@ -50,9 +29,9 @@ void player::Update (input Input, f32 dt) {
     collisionRight = false;
     for (auto platform : world->platformsStatic) {
         v2 md[2]; // minowski difference md[0] = min, md[1] = max
-        md[0] = position - V2(platform.x + platform.w, platform.y + platform.h);
-        md[1] = V2(md[0].x + width + platform.w,
-                   md[0].y + height + platform.h);
+        md[0] = position - V2(platform.rect.x + platform.rect.w, platform.rect.y + platform.rect.h);
+        md[1] = V2(md[0].x + width + platform.rect.w,
+                   md[0].y + height + platform.rect.h);
 
         if (md[0].x <= 0 && 
             md[0].y <= 0 &&
@@ -79,9 +58,9 @@ void player::Update (input Input, f32 dt) {
             }
             
             // check if right next to a platform
-            if (platform.x + platform.w == position.x) {
+            if (platform.rect.x + platform.rect.w == position.x) {
                 collisionLeft = true;
-            } else if (platform.x == position.x + width) {
+            } else if (platform.rect.x == position.x + width) {
                 collisionRight = true;
             }
 
@@ -96,14 +75,14 @@ void player::Update (input Input, f32 dt) {
             }
 
             // for debugging
-            pge->DrawLine(platform.x+platform.w/2.0f, platform.y+platform.h/2.0f, position.x + width/2.0, position.y + height/2.0f);
+            pge->DrawLine(platform.rect.x+platform.rect.w/2.0f, platform.rect.y+platform.rect.h/2.0f, position.x + width/2.0, position.y + height/2.0f);
         }
     }
 
     printf("position(%f, %f)\n", position.x, position.y);
 
     //TODO(shaw): if player is against wall, and in air, make a minimum velocity
-    // required to pull away from the wall and start moving
+    // required to pull away from the wall and start moving (stick to the wall a bit to aid wall jumping)
 
 // update player velocity
     if (left && !right && !collisionLeft) {
@@ -136,10 +115,11 @@ void player::Update (input Input, f32 dt) {
     } 
 
     if (canJump && jump) {
+        wallJumpTimer = grounded ? wallJumpTimeBuffer/2.0f : wallJumpTimeBuffer;
+        velocity.y -= jumpForce; // happens in one frame so don't use dt 
         canJump = false;
         grounded = false;
-        wallJumpTimer = wallJumpTimeBuffer;
-        velocity.y -= jumpForce; // happens in one frame so don't use dt 
+
     }
 
     if (canHang && jump) {
@@ -157,6 +137,9 @@ void player::Update (input Input, f32 dt) {
     position.y += velocity.y;
 
 // draw
+    //f32 ScreenX, ScreenY;    
+    //ScreenX = position.x - world->camera.x;
+    //ScreenY = position.y - world->camera.y;
     pge->FillRect(position.x, position.y, width, height, olc::WHITE);
 }
 

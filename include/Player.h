@@ -1,8 +1,9 @@
-#pragma once 
+#pragma once
 
 #include "olcPixelGameEngine.h"
 #include "types.h"
 #include "witch_math.h"
+#include "collisions.h"
 #include "World.h"
 
 struct player {

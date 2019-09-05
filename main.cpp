@@ -40,15 +40,44 @@ public:
 
         World = {};
         World.pge = this;
+        World.player = &Player;
+        World.camera = V2(0.0f, 0.0f);
+        World.fallDelay = 2.0f;
 
-        rect ground = { 0.0f, 500.0f, (f32)ScreenWidth(), 25.0f };
+        // TODO(shaw): create a better way of constructing the world
+        platform Ground = {
+            { 0.0f, 500.0f, (f32)ScreenWidth(), 25.0f },
+            0.0f
+        };
+        platform WallLeft = {
+            { 0.0f, 0.0f, 25.0f, (f32)ScreenHeight() },
+            0.0f
+        };
+        platform WallRight = {
+            { (f32)(ScreenWidth() - 25.0f), 0.0f, 25.0f, (f32)ScreenHeight() },
+            0.0f
+        };
 
-        rect wallLeft = { 0.0f, 0.0f, 25.0f, (f32)ScreenHeight() };
-        rect wallRight = { (f32)(ScreenWidth() - 25.0f), 0.0f, 25.0f, (f32)ScreenHeight() };
+        World.platformsStatic.push_back(Ground);
+        World.platformsStatic.push_back(WallLeft);
+        World.platformsStatic.push_back(WallRight);
 
-        World.platformsStatic.push_back(ground);
-        World.platformsStatic.push_back(wallLeft);
-        World.platformsStatic.push_back(wallRight);
+        platform Fall0 = {
+            { 100.0f, 0.0f, 25.0f, 66.0f },
+            0.1f
+        };
+        platform Fall1 = {
+            { 200.0f, 0.0f, 25.0f, 66.0f },
+            0.0f
+        };
+        platform Fall2 = {
+            { 300.0f, 0.0f, 25.0f, 66.0f },
+            0.0f
+        };
+
+        World.platformsFalling.push_back(Fall0);
+        World.platformsFalling.push_back(Fall1);
+        World.platformsFalling.push_back(Fall2);
 
         return true;    
     }
