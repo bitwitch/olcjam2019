@@ -24,6 +24,7 @@ struct player {
     bool right;
     bool jump;
     bool grounded;
+    bool collisionHoriz;
     f32 gravity;
     f32 frictionGround;
     f32 frictionAir;

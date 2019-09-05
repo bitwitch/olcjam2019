@@ -45,16 +45,13 @@ void player::Update (input Input, f32 dt) {
     }
 
     
-    // FIXME
+    // collisions
+    collisionHoriz = false;
     for (auto platform : world->platformsStatic) {
-        // collisions
-        v2 md[2]; // minowski difference
+        v2 md[2]; // minowski difference md[0] = min, md[1] = max
         md[0] = position - V2(platform.x + platform.w, platform.y + platform.h);
         md[1] = V2(md[0].x + width + platform.w,
                    md[0].y + height + platform.h);
-
-        //printf("minowski diff - min(%f, %f) max(%f, %f)\n", md[0].x, md[0].y, md[1].x, md[1].y);
-        printf("player pos: (%f, %f)\n\n", position.x, position.y);
 
         if (md[0].x <= 0 && 
             md[0].y <= 0 &&
@@ -72,43 +69,13 @@ void player::Update (input Input, f32 dt) {
             }
             
             if (penetration.x != 0) {
+                collisionHoriz = true;
                 velocity.x = 0;
             }
 
-            printf("penetration (%f, %f)\n", penetration.x, penetration.y);
             pge->DrawLine(platform.x+platform.w/2.0f, platform.y+platform.h/2.0f, position.x + width/2.0, position.y + height/2.0f);
         }
     }
-
-
-
-
-
-// check collisions
-    //rect Collisions[4] = {};
-    //if (collide = checkCollisionLeft()) {
-        //left = false;
-        //Collisions[0] = collide;
-    //} 
-    //if (collide = checkCollisionRight()) {
-        //right = false;
-        //Collisions[1] = collide;
-    //}
-    // if collide bottom, grounded = true, canJump = true
-
-
-
-
-
-
-
-/*    if (position.y + height > 500.0f) {*/
-        //position.y = 500.0f - height;
-        //grounded = true;
-        //canJump = true;
-        //canHang = true;
-        //velocity.y = 0;
-    //}
 
 // update player velocity
     if (left && !right) {
