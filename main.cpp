@@ -24,22 +24,21 @@ public:
         Player.width = 9;
         Player.height = 25;
         Player.position = { 100, 10 };
-        //Player.acceleration = { 4.0f, 10.0f };
         Player.accelHoriz = 4.0f;
         Player.jumpForce = 1.0f; // the initial jump
         Player.jumpAccel = 0.0136f; // the continued accel after initial jump; hang time
         Player.maxVelocity = { 700.0f, 700.0f };
         Player.gravity = 2.0f;
-        Player.frictionGround = 0.007f;
+        Player.frictionGround = 0.01f;
         Player.frictionAir = 0.0005f;
         Player.canJump = false;
         Player.maxJumpTime = 0.235f;
         Player.grounded = false;
+        Player.world = &World;
         Player.pge = this;
 
         World = {};
         World.pge = this;
-        World.player = Player;
 
         rect ground = { 0.0f, 500.0f, (f32)ScreenWidth(), 25.0f };
 

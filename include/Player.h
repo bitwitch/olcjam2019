@@ -3,9 +3,12 @@
 #include "olcPixelGameEngine.h"
 #include "types.h"
 #include "witch_math.h"
+#include "World.h"
 
 struct player {
     olc::PixelGameEngine *pge;
+    world *world;
+
     f32 width;
     f32 height;
     v2 position;

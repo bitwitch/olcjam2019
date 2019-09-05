@@ -1,12 +1,32 @@
 #include "Player.h"
 
+v2 getPenetrationVector(v2 *md) {
+    f32 minDist = ABS(0.0f - md[0].x); 
+    v2 boundsPoint = V2(md[0].x, 0.0f);
+
+    if (ABS(md[1].x) < minDist) {
+        minDist = ABS(md[1].x);
+        boundsPoint = V2(md[1].x, 0.0f);
+    }
+    if (ABS(md[1].y) < minDist) {
+        minDist = ABS(md[1].y);
+        boundsPoint = V2(0.0f, md[1].y);
+    }
+    if (ABS(md[0].y) < minDist) {
+        minDist = ABS(md[0].y);
+        boundsPoint = V2(0.0f, md[0].y);
+    }
+
+    return boundsPoint;
+}
+
+
 void player::Update (input Input, f32 dt) {
     
 // get players intention
     left  = Input.left;
     right = Input.right;
     
-    // FIXME(shaw): check this works
     if (Input.spaceHeld) {
         if (jumpHeldTime < maxJumpTime) {
             jump = true;
@@ -24,6 +44,45 @@ void player::Update (input Input, f32 dt) {
         if (!grounded) canHang = false;
     }
 
+    
+    // FIXME
+    for (auto platform : world->platformsStatic) {
+        // collisions
+        v2 md[2]; // minowski difference
+        md[0] = position - V2(platform.x + platform.w, platform.y + platform.h);
+        md[1] = V2(md[0].x + width + platform.w,
+                   md[0].y + height + platform.h);
+
+        //printf("minowski diff - min(%f, %f) max(%f, %f)\n", md[0].x, md[0].y, md[1].x, md[1].y);
+        printf("player pos: (%f, %f)\n\n", position.x, position.y);
+
+        if (md[0].x <= 0 && 
+            md[0].y <= 0 &&
+            md[1].x >= 0 &&
+            md[1].y >= 0)
+        {
+            v2 penetration = getPenetrationVector(md);
+            position = position - penetration;
+
+            if (penetration.y > 0) {
+                grounded = true;
+                canJump = true;
+                canHang = true;
+                velocity.y = 0;
+            }
+            
+            if (penetration.x != 0) {
+                velocity.x = 0;
+            }
+
+            printf("penetration (%f, %f)\n", penetration.x, penetration.y);
+            pge->DrawLine(platform.x+platform.w/2.0f, platform.y+platform.h/2.0f, position.x + width/2.0, position.y + height/2.0f);
+        }
+    }
+
+
+
+
 
 // check collisions
     //rect Collisions[4] = {};
@@ -37,13 +96,19 @@ void player::Update (input Input, f32 dt) {
     //}
     // if collide bottom, grounded = true, canJump = true
 
-    if (position.y + height > 500.0f) {
-        position.y = 500.0f - height;
-        grounded = true;
-        canJump = true;
-        canHang = true;
-        velocity.y = 0;
-    }
+
+
+
+
+
+
+/*    if (position.y + height > 500.0f) {*/
+        //position.y = 500.0f - height;
+        //grounded = true;
+        //canJump = true;
+        //canHang = true;
+        //velocity.y = 0;
+    //}
 
 // update player velocity
     if (left && !right) {
@@ -70,7 +135,7 @@ void player::Update (input Input, f32 dt) {
     if (canJump && jump) {
         canJump = false;
         grounded = false;
-        velocity.y -= jumpForce; 
+        velocity.y -= jumpForce; // happens in one frame so don't use dt 
     }
 
     if (canHang && jump) {

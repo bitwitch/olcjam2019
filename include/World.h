@@ -2,7 +2,6 @@
 #include "olcPixelGameEngine.h"
 #include "types.h"
 #include "witch_math.h"
-#include "Player.h"
 #include <vector>
 
 struct world {
@@ -11,7 +10,6 @@ struct world {
 
     olc::PixelGameEngine *pge;
 
-    player player;
     void Update(f32 dt);
 };
 
