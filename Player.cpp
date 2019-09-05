@@ -67,12 +67,25 @@ void player::Update (input Input, f32 dt) {
                 canHang = true;
                 velocity.y = 0;
             }
-            
+
             if (penetration.x != 0) {
                 collisionHoriz = true;
                 velocity.x = 0;
             }
+            
+            if (penetration.x != 0 && !grounded && wallJumpTimer <= 0) {
+                canJump = true;
+                canHang = true;
+               if (jump) {
+                   wallJumpTimer = wallJumpTimeBuffer;
+                   velocity.x += penetration.x > 0 ? -jumpForce : jumpForce;
+                   velocity.y += penetration.x > 0 ? -jumpForce/2.0f : jumpForce/2.0f;
 
+
+               }
+            }
+
+            // for debugging
             pge->DrawLine(platform.x+platform.w/2.0f, platform.y+platform.h/2.0f, position.x + width/2.0, position.y + height/2.0f);
         }
     }
@@ -99,16 +112,22 @@ void player::Update (input Input, f32 dt) {
         velocity.x = 0.0f;
     }
 
+    //printf("wallJumpTimer: %f\n", wallJumpTimer);
+
+    if (wallJumpTimer > 0) {
+        wallJumpTimer -= dt;
+    } 
+
     if (canJump && jump) {
         canJump = false;
         grounded = false;
+        wallJumpTimer = wallJumpTimeBuffer;
         velocity.y -= jumpForce; // happens in one frame so don't use dt 
     }
 
     if (canHang && jump) {
         velocity.y -= jumpAccel;
     }
-
     if (!grounded) {
         velocity.y += gravity * dt;
         if (velocity.y > maxVelocity.y) {

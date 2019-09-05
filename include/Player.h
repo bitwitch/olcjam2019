@@ -31,6 +31,8 @@ struct player {
     f32 jumpBuf;
     f32 jumpHeldTime;
     f32 maxJumpTime;
+    f32 wallJumpTimeBuffer;
+    f32 wallJumpTimer;
     olc::Sprite sprite;
 
     void Update(input Input, f32 dt);
