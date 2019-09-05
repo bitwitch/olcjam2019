@@ -27,7 +27,7 @@ public:
         //Player.acceleration = { 4.0f, 10.0f };
         Player.accelHoriz = 4.0f;
         Player.jumpForce = 1.0f; // the initial jump
-        Player.jumpAccel = 5.0f; // the continued accel after initial jump; hang time
+        Player.jumpAccel = 0.0136f; // the continued accel after initial jump; hang time
         Player.maxVelocity = { 700.0f, 700.0f };
         Player.gravity = 2.0f;
         Player.frictionGround = 0.007f;

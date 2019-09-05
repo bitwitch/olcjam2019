@@ -24,7 +24,6 @@ void player::Update (input Input, f32 dt) {
         if (!grounded) canHang = false;
     }
 
-    //printf("jumpHeldTime: %f  canJump: %d\n", jumpHeldTime, canJump);
 
 // check collisions
     //rect Collisions[4] = {};
@@ -42,6 +41,7 @@ void player::Update (input Input, f32 dt) {
         position.y = 500.0f - height;
         grounded = true;
         canJump = true;
+        canHang = true;
         velocity.y = 0;
     }
 
@@ -67,11 +67,14 @@ void player::Update (input Input, f32 dt) {
         velocity.x = 0.0f;
     }
 
-    // TODO(shaw): jump higher when hold button longer
     if (canJump && jump) {
         canJump = false;
         grounded = false;
         velocity.y -= jumpForce; 
+    }
+
+    if (canHang && jump) {
+        velocity.y -= jumpAccel;
     }
 
     if (!grounded) {
