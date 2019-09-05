@@ -33,7 +33,7 @@ public:
         Player.frictionAir = 0.0005f;
         Player.canJump = false;
         Player.maxJumpTime = 0.235f;
-        Player.wallJumpTimeBuffer = 0.666f;
+        Player.wallJumpTimeBuffer = 0.566f;
         Player.grounded = false;
         Player.world = &World;
         Player.pge = this;

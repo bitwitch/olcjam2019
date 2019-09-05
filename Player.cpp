@@ -46,7 +46,8 @@ void player::Update (input Input, f32 dt) {
 
     
     // collisions
-    collisionHoriz = false;
+    collisionLeft = false;
+    collisionRight = false;
     for (auto platform : world->platformsStatic) {
         v2 md[2]; // minowski difference md[0] = min, md[1] = max
         md[0] = position - V2(platform.x + platform.w, platform.y + platform.h);
@@ -69,19 +70,28 @@ void player::Update (input Input, f32 dt) {
             }
 
             if (penetration.x != 0) {
-                collisionHoriz = true;
                 velocity.x = 0;
+                if (penetration.x > 0) {
+                    collisionRight = true;
+                } else {
+                    collisionLeft = true;
+                }
             }
             
-            if (penetration.x != 0 && !grounded && wallJumpTimer <= 0) {
+            // check if right next to a platform
+            if (platform.x + platform.w == position.x) {
+                collisionLeft = true;
+            } else if (platform.x == position.x + width) {
+                collisionRight = true;
+            }
+
+            if ((collisionLeft || collisionRight) && !grounded && wallJumpTimer <= 0) {
                 canJump = true;
                 canHang = true;
                if (jump) {
                    wallJumpTimer = wallJumpTimeBuffer;
-                   velocity.x += penetration.x > 0 ? -jumpForce : jumpForce;
-                   velocity.y += penetration.x > 0 ? -jumpForce/2.0f : jumpForce/2.0f;
-
-
+                   velocity.x += collisionRight ? -jumpForce : jumpForce;
+                   velocity.y += jumpForce/2.0f;
                }
             }
 
@@ -90,18 +100,25 @@ void player::Update (input Input, f32 dt) {
         }
     }
 
+    printf("position(%f, %f)\n", position.x, position.y);
+
+    //TODO(shaw): if player is against wall, and in air, make a minimum velocity
+    // required to pull away from the wall and start moving
+
 // update player velocity
-    if (left && !right) {
+    if (left && !right && !collisionLeft) {
         velocity.x -= accelHoriz * dt;
         if (velocity.x > maxVelocity.x) {
             velocity.x = maxVelocity.x;
         }
-    } else if (right && !left) {
+    } else if (right && !left && !collisionRight) {
         velocity.x += accelHoriz * dt;
         if (velocity.x < -maxVelocity.x) {
             velocity.x = -maxVelocity.x;
         }
     }
+
+    printf("VelX After: %f\n", velocity.x);
 
     // friction 
     if (velocity.x > 0.005) {
