@@ -1,7 +1,5 @@
 #include "World.h"
-#ifndef PLAYER_H
 #include "Player.h"
-#endif
 
 void world::Update(f32 dt) {
     // camera
@@ -30,11 +28,11 @@ void world::Update(f32 dt) {
     {
         timeToSpawn = fallDelay;
 
-        f32 W = 25.0f; // 12 - 50 maybe
-        f32 H = 50.0f; // 25 - 100 maybe
-        f32 X = 300.0f; // 0 - (screenwidth - w)
-        f32 Y = 0 - camera.y;
-        f32 speed = 0.1; // random range
+        f32 W = rand() % 88 + 13; // 13 - 100 maybe
+        f32 H = rand() % 75 + 25; // 25 - 100 maybe
+        f32 X = rand() % pge->ScreenWidth() + 1 - W; // 0 - (screenwidth - w)
+        f32 Y = camera.y - H;
+        f32 speed = ((f32)rand() / RAND_MAX) + 0.1f; // random range
         rect R = Rect(X,Y,W,H);
         platform Platform;
         Platform.rect = R;
@@ -51,6 +49,7 @@ void world::Update(f32 dt) {
     std::vector<platform>::iterator it = platformsFalling.begin();
     while(it != platformsFalling.end()) 
     {
+        bool collided = false;
 
         // collisions
         for (auto platform : platformsStatic) {
@@ -68,11 +67,15 @@ void world::Update(f32 dt) {
                 v2 penetration = getPenetrationVector(md);
                 it->rect.x = it->rect.x - penetration.x;
                 it->rect.y = it->rect.y - penetration.y;
+                collided = true;
+                break;
             }
         }
 
         // update position
-        it->rect.y += it->speed;        
+        if (!collided) {
+            it->rect.y += it->speed;        
+        }
 
         // draw
         ScreenX = it->rect.x - camera.x;
@@ -83,8 +86,14 @@ void world::Update(f32 dt) {
             pge->FillRect(ScreenX, ScreenY, 
                 it->rect.w, it->rect.h, olc::VERY_DARK_RED);
         }
-
-        ++it;
+        
+        // update iterator
+        if (collided) {
+            platformsStatic.push_back(*it);
+            it = platformsFalling.erase(it);
+        } else { 
+            ++it;
+        }
     }
 
 }

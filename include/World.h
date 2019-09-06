@@ -3,6 +3,7 @@
 #include "types.h"
 #include "witch_math.h"
 #include "collisions.h"
+#include <stdlib.h>
 #include <vector>
 
 struct player;

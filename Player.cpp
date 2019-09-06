@@ -27,6 +27,7 @@ void player::Update (input Input, f32 dt) {
     // collisions
     collisionLeft = false;
     collisionRight = false;
+    grounded = false;
     for (auto platform : world->platformsStatic) {
         v2 md[2]; // minowski difference md[0] = min, md[1] = max
         md[0] = position - V2(platform.rect.x + platform.rect.w, platform.rect.y + platform.rect.h);
@@ -64,6 +65,10 @@ void player::Update (input Input, f32 dt) {
                 collisionRight = true;
             }
 
+            if (platform.rect.y == position.y + height) {
+                grounded = true;
+            }
+
             if ((collisionLeft || collisionRight) && !grounded && wallJumpTimer <= 0) {
                 canJump = true;
                 canHang = true;
@@ -79,7 +84,7 @@ void player::Update (input Input, f32 dt) {
         }
     }
 
-    printf("position(%f, %f)\n", position.x, position.y);
+    //printf("position(%f, %f)\n", position.x, position.y);
 
     //TODO(shaw): if player is against wall, and in air, make a minimum velocity
     // required to pull away from the wall and start moving (stick to the wall a bit to aid wall jumping)
@@ -97,8 +102,6 @@ void player::Update (input Input, f32 dt) {
         }
     }
 
-    printf("VelX After: %f\n", velocity.x);
-
     // friction 
     if (velocity.x > 0.005) {
         velocity.x -= grounded ? frictionGround : frictionAir;
@@ -108,18 +111,18 @@ void player::Update (input Input, f32 dt) {
         velocity.x = 0.0f;
     }
 
-    //printf("wallJumpTimer: %f\n", wallJumpTimer);
 
+    // jumping
     if (wallJumpTimer > 0) {
         wallJumpTimer -= dt;
     } 
-
+    
     if (canJump && jump) {
         wallJumpTimer = grounded ? wallJumpTimeBuffer/2.0f : wallJumpTimeBuffer;
         velocity.y -= jumpForce; // happens in one frame so don't use dt 
+        printf("velocity.y: %f\n", velocity.y);
         canJump = false;
         grounded = false;
-
     }
 
     if (canHang && jump) {
@@ -132,15 +135,17 @@ void player::Update (input Input, f32 dt) {
         }
     }
 
+    printf("position(%f, %f)\n", position.x, position.y);
+
 // move
     position.x += velocity.x;
     position.y += velocity.y;
 
 // draw
-    //f32 ScreenX, ScreenY;    
-    //ScreenX = position.x - world->camera.x;
-    //ScreenY = position.y - world->camera.y;
-    pge->FillRect(position.x, position.y, width, height, olc::WHITE);
+    f32 ScreenX, ScreenY;    
+    ScreenX = position.x - world->camera.x;
+    ScreenY = position.y - world->camera.y;
+    pge->FillRect(ScreenX, ScreenY, width, height, olc::WHITE);
 }
 
 
