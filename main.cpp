@@ -42,7 +42,7 @@ public:
         World.pge = this;
         World.player = &Player;
         World.camera = V2(0.0f, 0.0f);
-        World.fallDelay = 2.0f;
+        World.fallDelay = 1.0f;
 
         // TODO(shaw): create a better way of constructing the world
         platform Ground = {

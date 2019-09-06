@@ -38,5 +38,7 @@ struct player {
     olc::Sprite sprite;
 
     void Update(input Input, f32 dt);
+    void CollidePlatforms();
+  
 };
 
