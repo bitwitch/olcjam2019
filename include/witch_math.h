@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.h"
+#include <stdlib.h>
 
 #define ABS(N) ((N<0)?(-N):(N))
 
@@ -57,3 +58,4 @@ operator-(v2 A, v2 B)
     return Result;
 }
 
+f32 frand();

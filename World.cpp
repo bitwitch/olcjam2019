@@ -1,11 +1,27 @@
 #include "World.h"
 #include "Player.h"
 
-void world::Update(f32 dt) {
-    // camera
-    //camera.x = player->position.x - pge->ScreenWidth()/2.0f;
+void world::Update(f32 dt) 
+{
+// camera
     camera.y = player->position.y - pge->ScreenHeight()/2.0f;
     if (camera.y > 0) camera.y = 0.0f;
+    //camera.x = player->position.x - pge->ScreenWidth()/2.0f;
+    
+
+    //// random chance of screen shake
+    //if (frand() > 0.995f) {
+        //shake = 5.0f;
+    //}
+    
+    //if (shake > 0.005f) {
+        //camera.x += (frand() * 2.0f * shake) - shake; 
+        //camera.y += (frand() * 2.0f * shake) - shake; 
+        //shake *= 0.9;
+    //} else {
+        //camera.x = 0.0f;
+    //}
+
 
     f32 ScreenX, ScreenY;
 
@@ -30,9 +46,23 @@ void world::Update(f32 dt) {
 
         f32 W = rand() % 88 + 13; // 13 - 100 maybe
         f32 H = rand() % 75 + 25; // 25 - 100 maybe
-        f32 X = rand() % pge->ScreenWidth() + 1 - W; // 0 - (screenwidth - w)
         f32 Y = camera.y - H;
-        f32 speed = ((f32)rand() / RAND_MAX) + 0.1f; // random range
+        f32 X;
+        
+        if (platformsFalling.size() > 0) {
+            f32 lastX = platformsFalling.back().rect.x;
+            // random range that is within 200 of last platform
+            X = (frand() * 400.0f - 200.0f) + lastX; 
+            if (X < 0) {
+                X = 0.0f;
+            } else if (X + W > pge->ScreenWidth()) {
+                X = pge->ScreenWidth() - W;
+            }
+        } else {
+            X = rand() % pge->ScreenWidth() + 1 - W; // 0 - (screenwidth - w)
+        }
+
+        f32 speed = frand() + 0.1f; // random range
         rect R = Rect(X,Y,W,H);
         platform Platform;
         Platform.rect = R;

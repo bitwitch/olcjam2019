@@ -3,7 +3,6 @@
 #include "types.h"
 #include "witch_math.h"
 #include "collisions.h"
-#include <stdlib.h>
 #include <vector>
 
 struct player;
@@ -17,6 +16,7 @@ struct world {
     v2 camera;
     f32 fallDelay;
     f32 timeToSpawn;
+    f32 shake;
 
     std::vector<platform> platformsFalling;
     std::vector<platform> platformsStatic;

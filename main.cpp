@@ -43,41 +43,25 @@ public:
         World.player = &Player;
         World.camera = V2(0.0f, 0.0f);
         World.fallDelay = 1.0f;
+        World.shake = 0.0f;
 
         // TODO(shaw): create a better way of constructing the world
         platform Ground = {
-            { 0.0f, 500.0f, (f32)ScreenWidth(), 25.0f },
+            { 5.0f, 500.0f, (f32)ScreenWidth() - 10.0f, 25.0f },
             0.0f
         };
         platform WallLeft = {
-            { 0.0f, 0.0f, 25.0f, (f32)ScreenHeight() },
+            { 5.0f, 0.0f, 25.0f, (f32)ScreenHeight() },
             0.0f
         };
         platform WallRight = {
-            { (f32)(ScreenWidth() - 25.0f), 0.0f, 25.0f, (f32)ScreenHeight() },
+            { (f32)(ScreenWidth() - 25.0f - 5.0f), 0.0f, 25.0f, (f32)ScreenHeight() },
             0.0f
         };
 
         World.platformsStatic.push_back(Ground);
         World.platformsStatic.push_back(WallLeft);
         World.platformsStatic.push_back(WallRight);
-
-        platform Fall0 = {
-            { 100.0f, 0.0f, 25.0f, 66.0f },
-            0.1f
-        };
-        platform Fall1 = {
-            { 200.0f, 0.0f, 25.0f, 66.0f },
-            0.0f
-        };
-        platform Fall2 = {
-            { 300.0f, 0.0f, 25.0f, 66.0f },
-            0.0f
-        };
-
-        World.platformsFalling.push_back(Fall0);
-        World.platformsFalling.push_back(Fall1);
-        World.platformsFalling.push_back(Fall2);
 
         return true;    
     }
