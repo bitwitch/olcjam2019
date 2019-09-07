@@ -62,9 +62,16 @@ public:
             0.0f
         };
 
+        platform testSprite = {
+            { 300.0f, 400.0f, 32.0f, 32.0f },
+            0.0f,
+            new olc::Sprite("assets/falling_block.png")
+        };
+
         World.platformsStatic.push_back(Ground);
         World.platformsStatic.push_back(WallLeft);
         World.platformsStatic.push_back(WallRight);
+        World.platformsStatic.push_back(testSprite);
 
         return true;    
     }

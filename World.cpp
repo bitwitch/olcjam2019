@@ -34,8 +34,12 @@ void world::Update(f32 dt)
         // draw
         ScreenX = platform.rect.x - camera.x;
         ScreenY = platform.rect.y - camera.y;
-        pge->FillRect(ScreenX, ScreenY, 
-            platform.rect.w, platform.rect.h, olc::DARK_RED);
+        if (platform.sprite != NULL) {
+            pge->DrawSprite(ScreenX, ScreenY, platform.sprite, 1);
+        } else {
+            pge->FillRect(ScreenX, ScreenY, 
+                platform.rect.w, platform.rect.h, olc::DARK_RED);
+        }
     }
 
 // spawn new falling platforms
@@ -61,11 +65,12 @@ void world::Update(f32 dt)
             X = rand() % pge->ScreenWidth() + 1 - W; // 0 - (screenwidth - w)
         }
 
-        f32 speed = frand() + 0.1f; // random range
+        f32 speed = frand() * 0.5f + 0.1f; // random range
         rect R = Rect(X,Y,W,H);
-        platform Platform;
+        platform Platform = {};
         Platform.rect = R;
         Platform.speed = speed;
+        Platform.sprite = NULL;
         platformsFalling.push_back(Platform);
     } 
     else 

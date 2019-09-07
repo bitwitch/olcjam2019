@@ -10,6 +10,7 @@ struct player;
 struct platform {
     rect rect;
     f32 speed;
+    olc::Sprite *sprite;
 };
 
 struct world {
