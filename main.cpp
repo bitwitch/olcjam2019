@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "World.h"
 
+olc::Pixel BACKGROUND_BLUE(32, 38, 63);
+
 class Game : public olc::PixelGameEngine
 {
 public:
@@ -47,6 +49,7 @@ public:
         World.camera = V2(0.0f, 0.0f);
         World.fallDelay = 0.5f;
         World.shake = 0.0f;
+        World.platformSheet = new olc::Sprite("assets/falling_block_large.png");
 
         // TODO(shaw): create a better way of constructing the world
         platform Ground = {
@@ -62,24 +65,15 @@ public:
             0.0f
         };
 
-        platform testSprite = {
-            { 300.0f, 400.0f, 32.0f, 32.0f },
-            0.0f,
-            new olc::Sprite("assets/falling_block.png")
-        };
-
         World.platformsStatic.push_back(Ground);
         World.platformsStatic.push_back(WallLeft);
         World.platformsStatic.push_back(WallRight);
-        World.platformsStatic.push_back(testSprite);
 
         return true;    
     }
 
     bool OnUserUpdate(float fElapsedTime) override 
     {
-
-        // TODO(shaw): make sure this works
         if (GetKey(olc::Key::R).bPressed) {
             OnUserCreate();            
         }
@@ -89,7 +83,7 @@ public:
         Input.spaceHeld = GetKey(olc::Key::SPACE).bHeld;
         Input.spaceReleased = GetKey(olc::Key::SPACE).bReleased;
 
-        Clear(olc::BLACK);
+        Clear(BACKGROUND_BLUE);
 
         World.Update(fElapsedTime);
 

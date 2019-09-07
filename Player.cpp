@@ -23,7 +23,6 @@ void player::Update (input Input, f32 dt) {
         if (!grounded) canHang = false;
     }
 
-
 // collisions
     CollidePlatforms();
 
@@ -63,7 +62,7 @@ void player::Update (input Input, f32 dt) {
         wallJumpTimer -= dt;
     } 
 
-     // if wall jump
+    // if wall jump
     if (jump && (collisionLeft || collisionRight) && !grounded) {
         // if opposite wall from last jump
         if ((dirPrevWall == -1 && collisionRight) || 
@@ -142,7 +141,7 @@ void player::CollidePlatforms()
             if (penetration.y > 0) {
                 grounded = true;
                 canHang = true;
-                velocity.y = 0;
+                velocity.y = platform.speed;
             } else if (penetration.y < 0) {
                 if (grounded) {
                     health = 0; // DIE
