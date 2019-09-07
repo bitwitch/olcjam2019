@@ -23,9 +23,13 @@ void player::Update (input Input, f32 dt) {
         if (!grounded) canHang = false;
     }
 
-    
-    // collisions
+
+// collisions
     CollidePlatforms();
+
+    if (timeToDamage > 0.005) {
+        timeToDamage -= dt;
+    }
 
     //printf("position(%f, %f)\n", position.x, position.y);
 
@@ -54,22 +58,39 @@ void player::Update (input Input, f32 dt) {
         velocity.x = 0.0f;
     }
 
-
     // jumping
     if (wallJumpTimer > 0) {
         wallJumpTimer -= dt;
     } 
-    
-    if (canJump && jump) {
-        wallJumpTimer = grounded ? wallJumpTimeBuffer/2.0f : wallJumpTimeBuffer;
+
+     // if wall jump
+    if (jump && (collisionLeft || collisionRight) && !grounded) {
+        // if opposite wall from last jump
+        if ((dirPrevWall == -1 && collisionRight) || 
+            (dirPrevWall == 1 && collisionLeft)) 
+        {
+            velocity.x += collisionRight ? -jumpForce : jumpForce;
+            velocity.y -= jumpForce;
+            wallJumpTimer = wallJumpTimeBuffer;
+        // same or new wall
+        } else if (wallJumpTimer <= 0) {
+            velocity.x += collisionRight ? -jumpForce : jumpForce;
+            velocity.y -= jumpForce;
+            wallJumpTimer = wallJumpTimeBuffer;
+        }
+    }
+  
+    // if ground jump
+    if (grounded && jump) {
         velocity.y -= jumpForce; // happens in one frame so don't use dt 
-        canJump = false;
         grounded = false;
+        wallJumpTimer = wallJumpTimeBuffer * 0.5f;
     }
 
     if (canHang && jump) {
-        velocity.y -= jumpAccel;
+        velocity.y -= jumpAccel * dt;
     }
+
     if (!grounded) {
         velocity.y += gravity * dt;
         if (velocity.y > maxVelocity.y) {
@@ -77,6 +98,14 @@ void player::Update (input Input, f32 dt) {
         }
     }
 
+// update previous wall collision direction
+if (collisionLeft) {
+    dirPrevWall = -1;
+} else if (collisionRight) {
+    dirPrevWall = 1;
+} else {
+    dirPrevWall = 0;
+}
 
 // move
     position.x += velocity.x;
@@ -112,9 +141,16 @@ void player::CollidePlatforms()
 
             if (penetration.y > 0) {
                 grounded = true;
-                canJump = true;
                 canHang = true;
                 velocity.y = 0;
+            } else if (penetration.y < 0) {
+                if (grounded) {
+                    health = 0; // DIE
+                } else {
+                    health--;
+                    timeToDamage = damageSleep;
+                }
+                printf("OWWWWW!!!!!!!\n");
             }
 
             if (penetration.x != 0) {
@@ -135,16 +171,6 @@ void player::CollidePlatforms()
 
             if (platform.rect.y == position.y + height) {
                 grounded = true;
-            }
-
-            if ((collisionLeft || collisionRight) && !grounded && wallJumpTimer <= 0) {
-                canJump = true;
-                canHang = true;
-               if (jump) {
-                   wallJumpTimer = wallJumpTimeBuffer;
-                   velocity.x += collisionRight ? -jumpForce : jumpForce;
-                   velocity.y += jumpForce/2.0f;
-               }
             }
 
             // for debugging
@@ -169,7 +195,6 @@ void player::CollidePlatforms()
 
             if (penetration.y > 0) {
                 grounded = true;
-                canJump = true;
                 canHang = true;
                 velocity.y = 0;
             }
@@ -194,15 +219,15 @@ void player::CollidePlatforms()
                 grounded = true;
             }
 
-            if ((collisionLeft || collisionRight) && !grounded && wallJumpTimer <= 0) {
-                canJump = true;
-                canHang = true;
-               if (jump) {
-                   wallJumpTimer = wallJumpTimeBuffer;
-                   velocity.x += collisionRight ? -jumpForce : jumpForce;
-                   velocity.y += jumpForce/2.0f;
-               }
-            }
+            //if ((collisionLeft || collisionRight) && !grounded && wallJumpTimer <= 0) {
+                //canJump = true;
+                //canHang = true;
+                //if (jump) {
+                    //wallJumpTimer = wallJumpTimeBuffer;
+                    //velocity.x += collisionRight ? -jumpForce : jumpForce;
+                    //velocity.y += jumpForce/2.0f;
+                //}
+            /*}*/
 
             // for debugging
             pge->DrawLine(platform.rect.x+platform.rect.w/2.0f, platform.rect.y+platform.rect.h/2.0f, position.x + width/2.0, position.y + height/2.0f);

@@ -6,22 +6,25 @@ void world::Update(f32 dt)
 // camera
     camera.y = player->position.y - pge->ScreenHeight()/2.0f;
     if (camera.y > 0) camera.y = 0.0f;
+
+    // currently camera only moves vertically
+    // uncomment to allow horizontal movement, will need to 
+    // implement horizontal camera bounds first
+    //
     //camera.x = player->position.x - pge->ScreenWidth()/2.0f;
     
-
-    //// random chance of screen shake
-    //if (frand() > 0.995f) {
-        //shake = 5.0f;
-    //}
+    // random chance of screen shake
+    if (frand() > 0.995f) {
+        shake = 5.0f;
+    }
     
-    //if (shake > 0.005f) {
-        //camera.x += (frand() * 2.0f * shake) - shake; 
-        //camera.y += (frand() * 2.0f * shake) - shake; 
-        //shake *= 0.9;
-    //} else {
-        //camera.x = 0.0f;
-    //}
-
+    if (shake > 0.005f) {
+        camera.x += (frand() * 2.0f * shake) - shake; 
+        camera.y += (frand() * 2.0f * shake) - shake; 
+        shake *= 0.9;
+    } else {
+        camera.x = 0.0f;
+    }
 
     f32 ScreenX, ScreenY;
 
@@ -31,12 +34,8 @@ void world::Update(f32 dt)
         // draw
         ScreenX = platform.rect.x - camera.x;
         ScreenY = platform.rect.y - camera.y;
-        if (ScreenX >= 0 && ScreenX <= pge->ScreenWidth() &&
-            ScreenY >= 0 && ScreenY <= pge->ScreenHeight()) 
-        {
-            pge->FillRect(ScreenX, ScreenY, 
-                platform.rect.w, platform.rect.h, olc::DARK_RED);
-        }
+        pge->FillRect(ScreenX, ScreenY, 
+            platform.rect.w, platform.rect.h, olc::DARK_RED);
     }
 
 // spawn new falling platforms
@@ -110,12 +109,8 @@ void world::Update(f32 dt)
         // draw
         ScreenX = it->rect.x - camera.x;
         ScreenY = it->rect.y - camera.y;
-        if (ScreenX >= 0 && ScreenX <= pge->ScreenWidth() &&
-            ScreenY >= 0 && ScreenY <= pge->ScreenHeight()) 
-        {
-            pge->FillRect(ScreenX, ScreenY, 
-                it->rect.w, it->rect.h, olc::VERY_DARK_RED);
-        }
+        pge->FillRect(ScreenX, ScreenY, 
+            it->rect.w, it->rect.h, olc::VERY_DARK_RED);
         
         // update iterator
         if (collided) {
