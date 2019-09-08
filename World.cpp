@@ -28,6 +28,32 @@ void world::Update(f32 dt)
 
     f32 ScreenX, ScreenY;
 
+// draw church top if visible
+    if (camera.y < -3800) {
+        pge->DrawSprite(pge->ScreenWidth()/2.0f - 22, -4100 - camera.y, churchTop, 4);
+    }
+
+// draw windows
+    for (auto window : windows) {
+        // draw
+        ScreenX = window.x - camera.x;
+        ScreenY = window.y - camera.y;
+
+        v2 md[2]; // minowski difference md[0] = min, md[1] = max
+        md[0] = V2(ScreenX, ScreenY) - V2(pge->ScreenWidth(), pge->ScreenHeight());
+        md[1] = V2(md[0].x + 63 + pge->ScreenWidth(),
+                   md[0].y + 240 + pge->ScreenHeight());
+
+        if (md[0].x <= 0 && 
+            md[0].y <= 0 &&
+            md[1].x >= 0 &&
+            md[1].y >= 0)
+        {
+            pge->DrawSprite(ScreenX, ScreenY, churchWindow, 3);
+        }
+    }
+      
+
 // draw static platforms
     for (auto platform : platformsStatic) {
 
@@ -46,15 +72,8 @@ void world::Update(f32 dt)
             md[1].x >= 0 &&
             md[1].y >= 0)
         {
-
-            //if (platform.sprite != NULL) {
-                pge->DrawPartialSprite(ScreenX, ScreenY, platformSheet, 
-                        0, 0, platform.rect.w, platform.rect.h);
-/*            } else {*/
-                //pge->FillRect(ScreenX, ScreenY, 
-                    //platform.rect.w, platform.rect.h, olc::DARK_RED);
-            //}
-
+            pge->DrawPartialSprite(ScreenX, ScreenY, platformSheet, 
+                0, 0, platform.rect.w, platform.rect.h);
         }
     }
 
@@ -63,7 +82,7 @@ void world::Update(f32 dt)
     {
         timeToSpawn = fallDelay;
 
-        f32 W = rand() % 88 + 13; // 13 - 100 maybe
+        f32 W = rand() % 88 + 12; // 12 - 100 maybe
         f32 H = rand() % 75 + 25; // 25 - 100 maybe
         f32 Y = camera.y - H;
         f32 X;

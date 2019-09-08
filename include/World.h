@@ -21,7 +21,10 @@ struct world {
 
     std::vector<platform> platformsFalling;
     std::vector<platform> platformsStatic;
+    std::vector<v2> windows;
 
+    olc::Sprite *churchWindow;
+    olc::Sprite *churchTop;
     olc::Sprite *platformSheet;
     olc::PixelGameEngine *pge;
     player *player;

@@ -41,6 +41,7 @@ struct player {
     bool grounded;
     bool collisionLeft;
     bool collisionRight;
+    bool win;
 
     void Update(input Input, f32 dt);
     void CollidePlatforms();

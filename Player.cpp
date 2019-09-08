@@ -2,6 +2,16 @@
 
 void player::Update (input Input, f32 dt) {
     
+
+    // TODO(shaw): what I think we really want is a fixed time step
+    // but for now this janky shit will do
+    if (dt >= 0.008) {
+        jumpAccel = 10.0f;
+    } else {
+        jumpAccel = 2.36f;
+    }
+
+
 // get players intention
     left  = Input.left;
     right = Input.right;
@@ -102,13 +112,18 @@ if (collisionLeft) {
     dirPrevWall = -1;
 } else if (collisionRight) {
     dirPrevWall = 1;
-} else {
-    dirPrevWall = 0;
 }
+if (grounded) dirPrevWall = 0; 
+
 
 // move
     position.x += velocity.x;
     position.y += velocity.y;
+
+// win
+    if (position.y < -4100 + 240) {
+        win = true;        
+    }
 
 // draw
     f32 ScreenX, ScreenY;    
@@ -149,7 +164,6 @@ void player::CollidePlatforms()
                     health--;
                     timeToDamage = damageSleep;
                 }
-                printf("OWWWWW!!!!!!!\n");
             }
 
             if (penetration.x != 0) {
@@ -171,9 +185,6 @@ void player::CollidePlatforms()
             if (platform.rect.y == position.y + height) {
                 grounded = true;
             }
-
-            // for debugging
-            pge->DrawLine(platform.rect.x+platform.rect.w/2.0f, platform.rect.y+platform.rect.h/2.0f, position.x + width/2.0, position.y + height/2.0f);
         }
     }
 
@@ -217,22 +228,6 @@ void player::CollidePlatforms()
             if (platform.rect.y == position.y + height) {
                 grounded = true;
             }
-
-            //if ((collisionLeft || collisionRight) && !grounded && wallJumpTimer <= 0) {
-                //canJump = true;
-                //canHang = true;
-                //if (jump) {
-                    //wallJumpTimer = wallJumpTimeBuffer;
-                    //velocity.x += collisionRight ? -jumpForce : jumpForce;
-                    //velocity.y += jumpForce/2.0f;
-                //}
-            /*}*/
-
-            // for debugging
-            pge->DrawLine(platform.rect.x+platform.rect.w/2.0f, platform.rect.y+platform.rect.h/2.0f, position.x + width/2.0, position.y + height/2.0f);
         }
     }
-
-
-
 }
