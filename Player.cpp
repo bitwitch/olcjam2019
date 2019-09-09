@@ -121,7 +121,7 @@ if (grounded) dirPrevWall = 0;
     position.y += velocity.y;
 
 // win
-    if (position.y < -4100 + 240) {
+    if (position.y < -4100) {
         win = true;        
     }
 
