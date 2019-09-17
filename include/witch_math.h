@@ -58,4 +58,9 @@ operator-(v2 A, v2 B)
     return Result;
 }
 
-f32 frand();
+inline f32 
+frand() 
+{
+    return (f32)rand() / RAND_MAX;
+}
+

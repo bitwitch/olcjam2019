@@ -3,14 +3,19 @@
 #include "Player.h"
 #include "World.h"
 
-olc::Pixel BACKGROUND_BLUE(32, 38, 63);
 
 class Game : public olc::PixelGameEngine
 {
 public:
+    const olc::Pixel BACKGROUND_BLUE = olc::Pixel(32, 38, 63);
+    const f32 timePerFrame = 16.6666666;  // in milliseconds
+
+    std::chrono::system_clock::time_point timeNextFrame;
+
     input Input;
     player Player;
     world World;
+
 
 public:
     Game()
@@ -18,21 +23,23 @@ public:
         sAppName = "Cathedral";
     }
 
-    bool OnUserCreate() override 
+    bool OnUserCreate() override
     {
+        timeNextFrame = std::chrono::system_clock::now();
+
         Input = {};
 
-        Player = {}; 
+        Player = {};
         //Player.sprite =  olc::Sprite("player.png");
         Player.width = 9;
         Player.height = 25;
-        Player.position = { 150, 470 };
+        Player.position = {{ 150, 470 }};
         Player.health = 3;
         Player.damageSleep = 0.967f;
         Player.accelHoriz = 4.2f;
         Player.jumpForce = 1.2f; // the initial jump
         Player.jumpAccel = 2.36f; // the continued accel after initial jump; hang time
-        Player.maxVelocity = { 3.0f, 4.0f };
+        Player.maxVelocity = {{ 3.0f, 4.0f }};
         Player.gravity = 2.0f;
         Player.frictionGround = 0.01f;
         Player.frictionAir = 0.0005f;
@@ -71,16 +78,16 @@ public:
         World.platformsStatic.push_back(WallLeft);
         World.platformsStatic.push_back(WallRight);
 
-        v2 window1  = { ScreenWidth()*0.25f, 100.0f };
-        v2 window2  = { ScreenWidth()*0.75f, 100.0f };
-        v2 window3  = { ScreenWidth()*0.25f, -700.0f };
-        v2 window4  = { ScreenWidth()*0.75f, -700.0f };
-        v2 window5  = { ScreenWidth()*0.25f, -1600.0f };
-        v2 window6  = { ScreenWidth()*0.75f, -1600.0f };
-        v2 window7  = { ScreenWidth()*0.25f, -2400.0f };
-        v2 window8  = { ScreenWidth()*0.75f, -2400.0f };
-        v2 window9  = { ScreenWidth()*0.25f, -3300.0f };
-        v2 window10 = { ScreenWidth()*0.75f, -3300.0f };
+        v2 window1  = {{ ScreenWidth()*0.25f, 100.0f }};
+        v2 window2  = {{ ScreenWidth()*0.75f, 100.0f }};
+        v2 window3  = {{ ScreenWidth()*0.25f, -700.0f }};
+        v2 window4  = {{ ScreenWidth()*0.75f, -700.0f }};
+        v2 window5  = {{ ScreenWidth()*0.25f, -1600.0f }};
+        v2 window6  = {{ ScreenWidth()*0.75f, -1600.0f }};
+        v2 window7  = {{ ScreenWidth()*0.25f, -2400.0f }};
+        v2 window8  = {{ ScreenWidth()*0.75f, -2400.0f }};
+        v2 window9  = {{ ScreenWidth()*0.25f, -3300.0f }};
+        v2 window10 = {{ ScreenWidth()*0.75f, -3300.0f }};
 
         World.windows.push_back(window1);
         World.windows.push_back(window2);
@@ -96,8 +103,12 @@ public:
         return true;    
     }
 
-    bool OnUserUpdate(float fElapsedTime) override 
+    bool OnUserUpdate(float fElapsedTime) override
     {
+
+        timeNextFrame += std::chrono::milliseconds(1000 / 60); // 60Hz
+
+        // restart
         if (GetKey(olc::Key::R).bPressed) {
             OnUserCreate();            
         }
@@ -119,10 +130,16 @@ public:
             DrawString(200, 200, "You escaped the cathedral!", olc::WHITE, 2);
         }
 
+
+        //std::cout << std::time(0) << '\n'; // 60 for each second
+
+        // wait for end of frame
+        std::this_thread::sleep_until(timeNextFrame);
+
         return true;    
     }
 
-    bool OnUserDestroy() override 
+    bool OnUserDestroy() override
     {
         return true;    
     }
@@ -136,5 +153,3 @@ int main () {
     }
     return 0;
 }
-
-
