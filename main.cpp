@@ -131,7 +131,7 @@ public:
         }
 
 
-        //std::cout << std::time(0) << '\n'; // 60 for each second
+        std::cout << std::time(0) << '\n'; // 60 for each second
 
         // wait for end of frame
         std::this_thread::sleep_until(timeNextFrame);
